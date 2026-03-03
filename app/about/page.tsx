@@ -84,7 +84,7 @@ export default function AboutPage() {
 
           <div className="flex flex-col sm:flex-row gap-4 mt-4">
             <Link
-              href="https://github.com/riccardoalv/mural-de-fotos"
+              href="https://github.com/unir-dacc/mural-de-fotos"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-2 p-4 border rounded-lg hover:bg-accent transition-colors"
@@ -93,13 +93,13 @@ export default function AboutPage() {
               <div>
                 <p className="font-medium">Frontend</p>
                 <p className="text-sm text-muted-foreground">
-                  github.com/riccardoalv/mural-de-fotos
+                  github.com/unir-dacc/mural-de-fotos
                 </p>
               </div>
             </Link>
 
             <Link
-              href="https://github.com/riccardoalv/mural-de-fotos-backend"
+              href="https://github.com/unir-dacc/mural-de-fotos-backend"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-2 p-4 border rounded-lg hover:bg-accent transition-colors"
@@ -108,7 +108,7 @@ export default function AboutPage() {
               <div>
                 <p className="font-medium">Backend</p>
                 <p className="text-sm text-muted-foreground">
-                  github.com/riccardoalv/mural-de-fotos-backend
+                  github.com/unir-dacc/mural-de-fotos-backend
                 </p>
               </div>
             </Link>
@@ -117,7 +117,16 @@ export default function AboutPage() {
 
         <div className="mt-10 pt-6 border-t text-center text-sm text-muted-foreground">
           <p>
-            © {new Date().getFullYear()} Mural UNIR. Desenvolvido por Riccardo.
+            © {new Date().getFullYear()} Mural DACC. Desenvolvido por
+            <a
+              href="https://github.com"
+              className="hover:underline"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Dacc e Colaboradores
+            </a>
+            .
           </p>
         </div>
       </main>
