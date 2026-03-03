@@ -118,8 +118,9 @@ export default function AboutPage() {
         <div className="mt-10 pt-6 border-t text-center text-sm text-muted-foreground">
           <p>
             © {new Date().getFullYear()} Mural DACC. Desenvolvido por
+            <span></span>
             <a
-              href="https://github.com"
+              href="https://github.com/unir-dacc/mural-de-fotos/graphs/contributors"
               className="hover:underline"
               target="_blank"
               rel="noopener noreferrer"
