@@ -1,7 +1,5 @@
 "use client";
-
 import type React from "react";
-
 import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { Heart, MessageCircle, User, Play, ImageIcon } from "lucide-react";
@@ -24,6 +22,7 @@ export interface Photo {
   _count?: PhotoCounts;
   user?: PhotoUser;
   imageUrl: string;
+  thumbnailUrl?: string;
 }
 
 interface PhotoItemProps {
@@ -35,7 +34,6 @@ interface PhotoItemProps {
 }
 
 const DEFAULT_ASPECT_RATIO = 1.5;
-
 type Orientation = "horizontal" | "very-horizontal" | "vertical" | null;
 
 export function PhotoItem({
@@ -47,13 +45,11 @@ export function PhotoItem({
 }: PhotoItemProps) {
   const router = useRouter();
   const pathname = usePathname();
-
   const [mediaUrl, setMediaUrl] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [aspectRatio, setAspectRatio] = useState<number | null>(null);
   const [orientation, setOrientation] = useState<Orientation>(null);
   const [isVideo, setIsVideo] = useState(false);
-
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const imgRef = useRef<HTMLImageElement | null>(null);
 
@@ -62,25 +58,21 @@ export function PhotoItem({
   const mediaCount = photo._count?.Media ?? 0;
   const caption = photo.caption || "Sem título";
   const userName = photo.user?.name || "Usuário";
-
   const href = useDirectLink ? `/post/${photo.id}` : `/?post=${photo.id}`;
 
   useEffect(() => {
     setIsVideo(Boolean(photo.isVideo));
     if (!photo.id) return;
-
     try {
-      const url = photo.imageUrl;
-      console.log(photo);
+      const url = photo.thumbnailUrl || photo.imageUrl;
       setMediaUrl(url);
     } catch {
       setMediaUrl("");
     }
-  }, [photo.id, photo.isVideo, photo.imageUrl]);
+  }, [photo.id, photo.isVideo, photo.imageUrl, photo.thumbnailUrl]);
 
   const updateOrientation = useCallback((ratio: number) => {
     setAspectRatio(ratio);
-
     if (ratio > 1.8) {
       setOrientation("very-horizontal");
     } else if (ratio > 1.3) {
@@ -96,7 +88,6 @@ export function PhotoItem({
     setIsLoading(false);
     const img = e.currentTarget;
     if (!img.naturalWidth || !img.naturalHeight) return;
-
     const ratio = img.naturalWidth / img.naturalHeight;
     updateOrientation(ratio);
   };
@@ -105,7 +96,6 @@ export function PhotoItem({
     setIsLoading(false);
     const video = videoRef.current;
     if (!video || !video.videoWidth || !video.videoHeight) return;
-
     const ratio = video.videoWidth / video.videoHeight;
     updateOrientation(ratio);
   };
@@ -119,17 +109,13 @@ export function PhotoItem({
     if (typeof window !== "undefined") {
       localStorage.setItem("scrollPosition_home", window.scrollY.toString());
     }
-
     if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-
     e.preventDefault();
     onClick?.(photo);
-
     if (useDirectLink) {
       router.push(`/post/${photo.id}`, { scroll: false });
       return;
     }
-
     const searchParams = new URLSearchParams(window.location.search);
     searchParams.set("post", photo.id);
     const url = `${pathname}?${searchParams.toString()}`;
@@ -166,14 +152,33 @@ export function PhotoItem({
 
             {isVideo ? (
               <div className="relative h-full w-full">
-                <video
-                  ref={videoRef}
-                  src={mediaUrl}
-                  className="h-full w-full object-cover"
-                  onLoadedMetadata={handleVideoLoad}
-                  muted
-                  preload="metadata"
-                />
+                {photo.thumbnailUrl ? (
+                  <img
+                    src={photo.thumbnailUrl}
+                    alt={caption}
+                    className={cn(
+                      "h-full w-full object-cover transition-transform duration-500",
+                      isLoading ? "opacity-0" : "opacity-100",
+                      "group-hover:scale-105",
+                    )}
+                    onLoad={(e) => {
+                      setIsLoading(false);
+                      const img = e.currentTarget;
+                      if (!img.naturalWidth || !img.naturalHeight) return;
+                      updateOrientation(img.naturalWidth / img.naturalHeight);
+                    }}
+                    onError={() => setIsLoading(false)}
+                  />
+                ) : (
+                  <video
+                    ref={videoRef}
+                    src={mediaUrl}
+                    className="h-full w-full object-cover"
+                    onLoadedMetadata={handleVideoLoad}
+                    muted
+                    preload="metadata"
+                  />
+                )}
                 <div className="absolute inset-0 flex items-center justify-center bg-black/30 transition-colors group-hover:bg-black/40">
                   <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/80">
                     <Play className="ml-1 h-6 w-6 text-gray-800" />

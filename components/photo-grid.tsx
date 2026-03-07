@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import api from "@/lib/api";
 import { Photo, PhotoItem } from "@/components/photo-item";
@@ -28,6 +27,7 @@ type ApiPost = {
   createdAt: string;
   updatedAt: string;
   userId: string;
+  thumbnailUrl?: string;
   Media?: ApiMedia[];
   likes?: unknown[];
   user?: {
@@ -45,17 +45,14 @@ function mapPostsToPhotos(posts: ApiPost[]): Photo[] {
   return posts
     .map<Photo | null>((post) => {
       if (!post.Media || post.Media.length === 0) return null;
-
-      // pega a mídia com order = 1, se não tiver, usa a primeira
       const cover = post.Media.find((m) => m.order === 1) ?? post.Media[0];
-
       if (!cover) return null;
-
       return {
         id: post.id,
         caption: post.caption,
         isVideo: cover.isVideo,
         imageUrl: cover.imageUrl,
+        thumbnailUrl: post.thumbnailUrl,
         _count: post._count,
         user: post.user ? { name: post.user.name } : undefined,
       };
@@ -70,10 +67,8 @@ function useColumnCount(isClient: boolean) {
 
   useEffect(() => {
     if (!isClient) return;
-
     const updateColumnCount = () => {
       const width = window.innerWidth;
-
       if (width < 480) {
         setColumnCount(1);
       } else if (width < 768) {
@@ -84,7 +79,6 @@ function useColumnCount(isClient: boolean) {
         setColumnCount(4);
       }
     };
-
     updateColumnCount();
     window.addEventListener("resize", updateColumnCount);
     return () => window.removeEventListener("resize", updateColumnCount);
@@ -132,7 +126,6 @@ export default function PhotoGrid({
   useEffect(() => {
     const currentFilters = JSON.stringify(filters);
     const prevFilters = JSON.stringify(filtersRef.current);
-
     if (
       prevFilters !== currentFilters ||
       searchEndpointRef.current !== useSearchEndpoint
@@ -177,11 +170,7 @@ export default function PhotoGrid({
               }
             : undefined;
 
-        const response = await api.get("/posts", {
-          headers,
-          params,
-        });
-
+        const response = await api.get("/posts", { headers, params });
         const apiPosts: ApiPost[] = response.data.data || [];
         const newPhotos: Photo[] = mapPostsToPhotos(apiPosts);
         const meta = response.data.meta || {};
@@ -238,11 +227,9 @@ export default function PhotoGrid({
   const handleLastPhotoRef = useCallback(
     (node: HTMLDivElement | null) => {
       if (!isClient || loading || !hasMore) return;
-
       if (observer.current) {
         observer.current.disconnect();
       }
-
       observer.current = new IntersectionObserver(
         (entries) => {
           if (entries[0].isIntersecting && hasMore) {
@@ -250,12 +237,8 @@ export default function PhotoGrid({
             setIsFetchingMore(true);
           }
         },
-        {
-          rootMargin: "300px",
-          threshold: 0.1,
-        },
+        { rootMargin: "300px", threshold: 0.1 },
       );
-
       if (node) observer.current.observe(node);
     },
     [isClient, loading, hasMore],
@@ -264,17 +247,14 @@ export default function PhotoGrid({
   const columns = useMemo(() => {
     if (columnCount <= 1)
       return [[...photos.map((photo, index) => ({ photo, index }))]];
-
     const result: { photo: Photo; index: number }[][] = Array.from(
       { length: columnCount },
       () => [],
     );
-
     photos.forEach((photo, index) => {
       const colIndex = index % columnCount;
       result[colIndex].push({ photo, index });
     });
-
     return result;
   }, [photos, columnCount]);
 
