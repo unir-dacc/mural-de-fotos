@@ -115,7 +115,7 @@ export default function AboutPage() {
           </div>
         </div>
 
-        <div className="mt-10 pt-6 border-t text-center text-sm text-muted-foreground">
+        <div className="mt-10 pt-6 border-t text-center text-sm text-muted-foreground space-y-2">
           <p>
             © {new Date().getFullYear()} Mural DACC. Desenvolvido por
             <span></span>
@@ -128,6 +128,14 @@ export default function AboutPage() {
               Dacc e Colaboradores
             </a>
             .
+          </p>
+          <p className="flex justify-center gap-4">
+            <Link href="/termos-de-uso" className="hover:underline">
+              Termos de Uso
+            </Link>
+            <Link href="/politica-de-privacidade" className="hover:underline">
+              Política de Privacidade
+            </Link>
           </p>
         </div>
       </main>
