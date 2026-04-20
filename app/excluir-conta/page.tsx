@@ -4,9 +4,9 @@ import { Button } from "@/components/ui/button";
 import Header from "@/components/header";
 
 export const metadata = {
-  title: "Excluir Conta — Mural UNIR",
+  title: "Excluir Conta — Mural de Fotos UNIR",
   description:
-    "Saiba como solicitar a exclusão da sua conta e dos seus dados no Mural UNIR (DACC/UNIR).",
+    "Saiba como solicitar a exclusão da sua conta e dos seus dados no Mural de Fotos UNIR.",
 };
 
 export default function DeleteAccountPage() {
@@ -24,7 +24,7 @@ export default function DeleteAccountPage() {
 
           <h1 className="text-3xl font-bold mb-1">Exclusão de Conta</h1>
           <p className="text-muted-foreground text-sm">
-            Mural UNIR — desenvolvido pelo DACC/UNIR
+            Mural de Fotos UNIR — desenvolvido por Ricardo Alves da Silva
           </p>
         </div>
 
@@ -33,7 +33,7 @@ export default function DeleteAccountPage() {
           <section className="space-y-2">
             <p>
               Você pode solicitar a exclusão completa da sua conta no{" "}
-              <strong>Mural UNIR</strong> a qualquer momento. Esta página
+              <strong>Mural de Fotos UNIR</strong> a qualquer momento. Esta página
               descreve as etapas para fazer a solicitação, quais dados são
               excluídos e quais podem ser retidos por obrigação legal.
             </p>
@@ -82,7 +82,7 @@ export default function DeleteAccountPage() {
                     </a>{" "}
                     com o assunto{" "}
                     <strong>
-                      &quot;Solicitação de exclusão de conta — Mural UNIR&quot;
+                      &quot;Solicitação de exclusão de conta — Mural de Fotos UNIR&quot;
                     </strong>{" "}
                     informando o e-mail cadastrado na sua conta.
                   </p>

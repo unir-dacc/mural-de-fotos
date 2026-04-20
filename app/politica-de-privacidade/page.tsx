@@ -4,9 +4,9 @@ import { Button } from "@/components/ui/button";
 import Header from "@/components/header";
 
 export const metadata = {
-  title: "Política de Privacidade — Mural UNIR",
+  title: "Política de Privacidade — Mural de Fotos UNIR",
   description:
-    "Política de Privacidade do Mural UNIR, em conformidade com a Lei Geral de Proteção de Dados (LGPD — Lei nº 13.709/2018).",
+    "Política de Privacidade do Mural de Fotos UNIR, em conformidade com a Lei Geral de Proteção de Dados (LGPD — Lei nº 13.709/2018).",
 };
 
 export default function PrivacyPolicyPage() {
@@ -31,12 +31,10 @@ export default function PrivacyPolicyPage() {
         <div className="prose prose-neutral dark:prose-invert max-w-none space-y-8 text-sm leading-relaxed">
           <section className="space-y-2">
             <p>
-              O <strong>Mural UNIR</strong> é um projeto acadêmico mantido pelo
+              O <strong>Mural de Fotos UNIR</strong> é um projeto acadêmico
+              desenvolvido por <strong>Ricardo Alves da Silva</strong> para o
               Diretório Acadêmico do Curso de Ciência da Computação (DACC) da{" "}
-              <strong>
-                Universidade Federal de Rondônia — UNIR
-              </strong>
-              . Esta Política de Privacidade descreve como coletamos, usamos,
+              <strong>Universidade Federal de Rondônia — UNIR</strong>. Esta Política de Privacidade descreve como coletamos, usamos,
               armazenamos e protegemos seus dados pessoais, em conformidade com
               a{" "}
               <strong>
@@ -53,8 +51,9 @@ export default function PrivacyPolicyPage() {
               1. Controlador dos Dados
             </h2>
             <p>
-              O controlador responsável pelo tratamento dos dados pessoais é o{" "}
-              <strong>DACC/UNIR</strong>. Para exercer seus direitos ou
+              O controlador responsável pelo tratamento dos dados pessoais é{" "}
+              <strong>Ricardo Alves da Silva</strong>, desenvolvedor do{" "}
+              <strong>Mural de Fotos UNIR</strong>. Para exercer seus direitos ou
               esclarecer dúvidas, entre em contato pelo e-mail:{" "}
               <a
                 href="mailto:dacc@unir.br"

@@ -4,9 +4,9 @@ import { Button } from "@/components/ui/button";
 import Header from "@/components/header";
 
 export const metadata = {
-  title: "Termos de Uso — Mural UNIR",
+  title: "Termos de Uso — Mural de Fotos UNIR",
   description:
-    "Termos de Uso do Mural UNIR, em conformidade com o Marco Civil da Internet (Lei nº 12.965/2014) e demais normas aplicáveis.",
+    "Termos de Uso do Mural de Fotos UNIR, em conformidade com o Marco Civil da Internet (Lei nº 12.965/2014) e demais normas aplicáveis.",
 };
 
 export default function TermsOfUsePage() {
@@ -31,9 +31,10 @@ export default function TermsOfUsePage() {
         <div className="space-y-8 text-sm leading-relaxed">
           <section className="space-y-2">
             <p>
-              Bem-vindo ao <strong>Mural UNIR</strong>, plataforma de
-              compartilhamento de fotos mantida pelo Diretório Acadêmico do
-              Curso de Ciência da Computação (DACC) da{" "}
+              Bem-vindo ao <strong>Mural de Fotos UNIR</strong>, plataforma de
+              compartilhamento de fotos desenvolvida por{" "}
+              <strong>Ricardo Alves da Silva</strong> para o Diretório Acadêmico
+              do Curso de Ciência da Computação (DACC) da{" "}
               <strong>Universidade Federal de Rondônia — UNIR</strong>. Ao
               acessar ou utilizar este serviço, você declara ter lido,
               compreendido e concordado com os presentes Termos de Uso, bem como
@@ -59,7 +60,7 @@ export default function TermsOfUsePage() {
           <section className="space-y-2">
             <h2 className="text-xl font-semibold">1. Descrição do Serviço</h2>
             <p>
-              O Mural UNIR é uma plataforma digital que permite que membros da
+              O Mural de Fotos UNIR é uma plataforma digital que permite que membros da
               comunidade acadêmica da UNIR (estudantes, professores e
               servidores) publiquem, curtam e comentem fotos relacionadas ao
               ambiente universitário. O serviço é gratuito e sem fins
@@ -120,7 +121,7 @@ export default function TermsOfUsePage() {
               </li>
             </ul>
             <p>
-              Ao publicar Conteúdo do Usuário, você concede ao Mural UNIR uma
+              Ao publicar Conteúdo do Usuário, você concede ao Mural de Fotos UNIR uma
               licença não exclusiva, gratuita e revogável para exibir, armazenar
               e reproduzir o conteúdo na plataforma, exclusivamente para a
               prestação do serviço.
@@ -164,7 +165,7 @@ export default function TermsOfUsePage() {
               5. Moderação e Remoção de Conteúdo
             </h2>
             <p>
-              Os administradores do Mural UNIR reservam-se o direito de remover,
+              Os administradores do Mural de Fotos UNIR reservam-se o direito de remover,
               sem aviso prévio, qualquer conteúdo que viole estes Termos ou as
               leis aplicáveis, bem como suspender ou encerrar contas de
               usuários infratores.
@@ -183,13 +184,13 @@ export default function TermsOfUsePage() {
               6. Propriedade Intelectual
             </h2>
             <p>
-              A estrutura, design, código-fonte e marca do Mural UNIR são
+              A estrutura, design, código-fonte e marca do Mural de Fotos UNIR são
               protegidos pela Lei nº 9.610/1998. O código-fonte do projeto está
               disponível sob licença de código aberto (open source) no GitHub.
             </p>
             <p>
               O conteúdo publicado pelos usuários permanece de titularidade de
-              seus respectivos autores. O Mural UNIR não reivindica propriedade
+              seus respectivos autores. O Mural de Fotos UNIR não reivindica propriedade
               sobre o Conteúdo do Usuário.
             </p>
           </section>
@@ -201,7 +202,7 @@ export default function TermsOfUsePage() {
             </h2>
             <p>
               O serviço é fornecido &quot;como está&quot;, sem garantias de
-              disponibilidade contínua. O DACC/UNIR não se responsabiliza por:
+              disponibilidade contínua. O desenvolvedor não se responsabiliza por:
             </p>
             <ul className="list-disc pl-5 space-y-1">
               <li>
