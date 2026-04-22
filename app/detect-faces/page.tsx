@@ -64,7 +64,7 @@ export type Meta = {
   next: number | null;
 };
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 2000000;
 
 function useAuthToken(isClient: boolean) {
   const [token, setToken] = useState<string | null>(null);
