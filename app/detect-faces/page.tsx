@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import api from "@/lib/api";
 import Header from "@/components/header";
 import { useAuth } from "@/context/auth-context";
@@ -87,116 +87,114 @@ export default function DetectFacesPage() {
   const { token, loaded: tokenLoaded } = useAuthToken(isClient);
 
   const [clusters, setClusters] = useState<LabelingCluster[]>([]);
-  const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [isFetchingMore, setIsFetchingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const observer = useRef<IntersectionObserver | null>(null);
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
+  const loadingRef = useRef(false);
+  const hasMoreRef = useRef(true);
+  const pageRef = useRef(1);
+  const tokenRef = useRef(token);
+  const isAuthenticatedRef = useRef(isAuthenticated);
 
   const [open, setOpen] = useState(false);
   const [selectedCluster, setSelectedCluster] =
     useState<LabelingCluster | null>(null);
 
+  // Keep refs in sync so the observer callback always has latest values
   useEffect(() => {
-    if (!tokenLoaded || loading || !hasMore || !isFetchingMore) return;
+    tokenRef.current = token;
+    isAuthenticatedRef.current = isAuthenticated;
+  }, [token, isAuthenticated]);
 
-    const fetchClusters = async () => {
-      setLoading(true);
-      setError(null);
+  const fetchNextPage = useRef(async () => {
+    if (loadingRef.current || !hasMoreRef.current) return;
+    loadingRef.current = true;
+    setLoading(true);
+    setError(null);
 
-      try {
-        const headers =
-          isAuthenticated && token
-            ? {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-              }
-            : undefined;
+    const p = pageRef.current;
 
-        const response = await api.get("/labeling", {
-          headers,
-          params: {
-            limit: PAGE_SIZE,
-            page,
-          },
+    try {
+      const headers =
+        isAuthenticatedRef.current && tokenRef.current
+          ? {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${tokenRef.current}`,
+            }
+          : undefined;
+
+      const response = await api.get("/labeling", {
+        headers,
+        params: { limit: PAGE_SIZE, page: p },
+      });
+
+      const data: LabelingCluster[] = response.data.data || [];
+      const meta: Meta = response.data.meta || {
+        total: 0,
+        lastPage: 1,
+        currentPage: 1,
+        perPage: PAGE_SIZE,
+        prev: null,
+        next: null,
+      };
+
+      if (p === 1) {
+        setClusters(data);
+      } else {
+        setClusters((prev) => {
+          const existingIds = new Set(prev.map((c) => c.id));
+          const unique = data.filter((c) => !existingIds.has(c.id));
+          return unique.length > 0 ? [...prev, ...unique] : prev;
         });
-
-        const data: LabelingCluster[] = response.data.data || [];
-        const meta: Meta = response.data.meta || {
-          total: 0,
-          lastPage: 1,
-          currentPage: 1,
-          perPage: PAGE_SIZE,
-          prev: null,
-          next: null,
-        };
-
-        if (page === 1) {
-          setClusters(data);
-        } else {
-          setClusters((prev) => {
-            const existingIds = new Set(prev.map((c) => c.id));
-            const unique = data.filter((c) => !existingIds.has(c.id));
-            return unique.length > 0 ? [...prev, ...unique] : prev;
-          });
-        }
-
-        setHasMore(meta.currentPage < meta.lastPage);
-      } catch (err) {
-        console.error("Erro ao buscar labeling:", err);
-        setError("Não foi possível carregar os rostos para classificação.");
-        setHasMore(false);
-      } finally {
-        setLoading(false);
-        setIsFetchingMore(false);
       }
-    };
 
-    fetchClusters();
-  }, [
-    page,
-    tokenLoaded,
-    loading,
-    hasMore,
-    isFetchingMore,
-    isAuthenticated,
-    token,
-  ]);
+      const more = meta.currentPage < meta.lastPage;
+      hasMoreRef.current = more;
+      setHasMore(more);
 
-  useEffect(() => {
-    if (tokenLoaded && !loading && hasMore && clusters.length === 0) {
-      setIsFetchingMore(true);
+      if (more) {
+        pageRef.current = p + 1;
+      }
+    } catch (err) {
+      console.error("Erro ao buscar labeling:", err);
+      setError("Não foi possível carregar os rostos para classificação.");
+      hasMoreRef.current = false;
+      setHasMore(false);
+    } finally {
+      loadingRef.current = false;
+      setLoading(false);
     }
-  }, [tokenLoaded, loading, hasMore, clusters.length]);
+  });
 
-  const handleLastClusterRef = useCallback(
-    (node: HTMLDivElement | null) => {
-      if (!isClient || loading || !hasMore) return;
+  // Initial load once token is ready
+  useEffect(() => {
+    if (!tokenLoaded) return;
+    fetchNextPage.current();
+  }, [tokenLoaded]);
 
-      if (observer.current) {
-        observer.current.disconnect();
-      }
+  // IntersectionObserver watches the sentinel element
+  useEffect(() => {
+    if (!isClient) return;
 
-      observer.current = new IntersectionObserver(
-        (entries) => {
-          if (entries[0].isIntersecting && hasMore) {
-            setPage((prev) => prev + 1);
-            setIsFetchingMore(true);
-          }
-        },
-        {
-          rootMargin: "300px",
-          threshold: 0.1,
-        },
-      );
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
 
-      if (node) observer.current.observe(node);
-    },
-    [isClient, loading, hasMore],
-  );
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          fetchNextPage.current();
+        }
+      },
+      { rootMargin: "300px", threshold: 0 },
+    );
+
+    observer.observe(sentinel);
+
+    return () => observer.disconnect();
+  }, [isClient]);
 
   const openClusterModal = (cluster: LabelingCluster) => {
     setSelectedCluster(cluster);
@@ -230,18 +228,13 @@ export default function DetectFacesPage() {
         )}
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {clusters.map((cluster, index) => {
-            const isLast = index === clusters.length - 1;
-
-            return (
-              <ClusterCard
-                key={cluster.id}
-                cluster={cluster}
-                innerRef={isLast ? handleLastClusterRef : undefined}
-                onClick={() => openClusterModal(cluster)}
-              />
-            );
-          })}
+          {clusters.map((cluster) => (
+            <ClusterCard
+              key={cluster.id}
+              cluster={cluster}
+              onClick={() => openClusterModal(cluster)}
+            />
+          ))}
         </div>
 
         {!loading && !hasClusters && (
@@ -255,6 +248,8 @@ export default function DetectFacesPage() {
             Carregando rostos...
           </div>
         )}
+
+        {hasMore && <div ref={sentinelRef} className="h-1" />}
 
         <LabelClusterDialog
           open={open}

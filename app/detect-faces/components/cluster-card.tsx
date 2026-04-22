@@ -2,11 +2,10 @@ import { LabelingCluster } from "../page";
 
 type ClusterCardProps = {
   cluster: LabelingCluster;
-  innerRef?: (node: HTMLDivElement | null) => void;
   onClick: () => void;
 };
 
-export function ClusterCard({ cluster, innerRef, onClick }: ClusterCardProps) {
+export function ClusterCard({ cluster, onClick }: ClusterCardProps) {
   const first = cluster.entities[0];
   if (!first) return null;
 
@@ -14,7 +13,6 @@ export function ClusterCard({ cluster, innerRef, onClick }: ClusterCardProps) {
 
   return (
     <div
-      ref={innerRef}
       className={`group flex cursor-pointer flex-col items-center rounded-2xl border bg-card p-4 shadow-sm transition-transform hover:-translate-y-1 hover:shadow-md ${
         cluster.userId ? "border-emerald-500/50" : "border-border"
       }`}
